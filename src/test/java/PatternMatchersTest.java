@@ -14,7 +14,7 @@ import java.math.BigInteger;
 
 import static net.sf.staccatocommons.lang.function.Functions.constant;
 import static net.sf.staccatocommons.lang.function.Functions.identity;
-import static net.sf.staccatocommons.patmach.PatternMatchers.case_;
+import static net.sf.staccatocommons.patmach.PatternMatchers.match;
 import static net.sf.staccatocommons.patmach.Patterns.eq;
 import static net.sf.staccatocommons.patmach.Patterns.rx;
 import static net.sf.staccatocommons.patmach.Patterns.type;
@@ -26,8 +26,8 @@ public class PatternMatchersTest {
     @Test
     public void constantPatterns() {
         Function<Integer, Integer> matcher =
-            case_(eq(1), constant(10)).
-            case_(eq(2), constant(20)).
+            match(eq(1), constant(10)).
+            match(eq(2), constant(20)).
             default_(constant(100));
 
         assertEquals(10, (int) matcher.apply(1));
@@ -38,12 +38,12 @@ public class PatternMatchersTest {
     @Test
     public void constantPatternsWithAnonymousClass() {
         Function<Integer, Integer> matcher =
-                case_(eq(1), new AbstractFunction<Integer, Integer>(){
+                match(eq(1), new AbstractFunction<Integer, Integer>(){
                     public Integer apply(Integer _) {
                         return 1;
                     }
                 }).
-                case_(eq(2), new AbstractFunction<Integer, Integer>(){
+                match(eq(2), new AbstractFunction<Integer, Integer>(){
                     public Integer apply(Integer _) {
                         return 2;
                     }
@@ -62,8 +62,8 @@ public class PatternMatchersTest {
     @Test
     public void patternsWithBinding() {
         Function<Integer, Integer> matcher =
-                case_(eq(1), constant(10)).
-                case_(eq(2), constant(20)).
+                match(eq(1), constant(10)).
+                match(eq(2), constant(20)).
                 default_(Functions.<Integer>identity());
 
         assertEquals(10, (int) matcher.apply(1));
@@ -74,12 +74,12 @@ public class PatternMatchersTest {
     @Test
     public void patternsWithBindingWithAnonymousClass() {
         Function<Integer, Integer> patmatch =
-                case_(eq(1), new AbstractFunction<Integer, Integer>() {
+                match(eq(1), new AbstractFunction<Integer, Integer>() {
                     public Integer apply(Integer arg) {
                         return 10;
                     }
                 }).
-                case_(eq(2), new AbstractFunction<Integer, Integer>() {
+                match(eq(2), new AbstractFunction<Integer, Integer>() {
                     public Integer apply(Integer arg) {
                         return 20;
                     }
@@ -98,12 +98,12 @@ public class PatternMatchersTest {
     @Test
     public void patternsWithMultipleBinding() {
         Function<String, String> matcher =
-            case_(rx("(.).(.)"), new AbstractFunction2<String, String, String>() {
+            match(rx("(.).(.)"), new AbstractFunction2<String, String, String>() {
                 public String apply(String x, String y) {
                     return x + y;
                 }
             }).
-            case_(rx("(.)."), Functions.<String>identity()).
+            match(rx("(.)."), Functions.<String>identity()).
             defaultFail();
 
         assertEquals("ac", matcher.apply("abc"));
@@ -113,13 +113,13 @@ public class PatternMatchersTest {
     @Test
     public void typePatterns() {
         Function<Object, String> matcher =
-            case_(type(Integer.class), Functions.toString_()).
-            case_(type(BigInteger.class), new AbstractFunction<BigInteger, String>(){
+            match(type(Integer.class), Functions.toString_()).
+            match(type(BigInteger.class), new AbstractFunction<BigInteger, String>(){
                 public String apply(BigInteger x) {
                     return x.toString(2);
                 }
             }).
-            case_(type(String.class), Functions.<String>identity()).
+            match(type(String.class), Functions.<String>identity()).
             defaultFail();
 
         assertEquals("10", matcher.apply(10));
