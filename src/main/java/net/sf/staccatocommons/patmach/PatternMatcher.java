@@ -18,36 +18,36 @@ public class PatternMatcher<A, B> {
 
   private final List<Applicable<A, Option<B>>> cases = new LinkedList<Applicable<A, Option<B>>>();
 
-  public PatternMatcher<A, B> case_(UntypedPatternExpression<A> expression) {
-    return case_(expression, Functions.<B> identity());
+  public PatternMatcher<A, B> match(UntypedPatternExpression<A> expression) {
+    return match(expression, Functions.<B> identity());
   }
 
-  public PatternMatcher<A, B> case_(UntypedPatternExpression<A> expression,
+  public PatternMatcher<A, B> match(UntypedPatternExpression<A> expression,
     Function<?, ? extends B> function) {
     cases.add(new UntypedCase<A, B>(expression, function));
     return this;
   }
 
-  public <C> PatternMatcher<A, B> case_(TypedPatternExpression<A, C> expression,
+  public <C> PatternMatcher<A, B> match(TypedPatternExpression<A, C> expression,
     Function<? super C, ? extends B> function) {
     cases.add(new TypedCase<A, C, B>(expression, function));
     return this;
   }
 
-  public PatternMatcher<A, B> case_(UntypedPatternExpression<A> expression,
+  public PatternMatcher<A, B> match(UntypedPatternExpression<A> expression,
     Function2<?, ?, ? extends B> function) {
     cases.add(new UntypedCase2<A, B>(expression, function));
     return this;
   }
 
-  public PatternMatcher<A, B> case_(UntypedPatternExpression<A> expression,
+  public PatternMatcher<A, B> match(UntypedPatternExpression<A> expression,
     Function3<?, ?, ?, ? extends B> function) {
     cases.add(new UntypedCase3<A, B>(expression, function));
     return this;
   }
 
   public Function<A, B> default_(Function<? super A, ? extends B> function) {
-    case_(Patterns.<A> free(), function);
+    match(Patterns.<A> free(), function);
     return new AbstractFunction<A, B>() {
       public B apply(A arg0) {
         return Streams
